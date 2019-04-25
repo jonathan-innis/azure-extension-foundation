@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Azure/azure-extension-foundation/httputil"
+	"github.com/pkg/errors"
 )
 
 const metadataUrl = "http://169.254.169.254/metadata/instance?api-version=2017-08-01"
@@ -88,7 +89,8 @@ func (provider *provider) GetMetadata() (Metadata, error) {
 	}
 	responseString := string(responseBody[:])
 	if responseCode != 200 {
-		return retval, fmt.Errorf("Get request for metadata returned return code %v.\nResponse Body: %s", responseCode, responseString)
+		return retval, errors.WithStack(
+			fmt.Errorf("Get request for metadata returned return code %v.\nResponse Body: %s", responseCode, responseString))
 	}
 	err = json.Unmarshal(responseBody[:], &retval)
 	return retval, err

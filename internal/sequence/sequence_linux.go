@@ -6,6 +6,7 @@ package sequence
 import (
 	"fmt"
 	"github.com/Azure/azure-extension-foundation/internal/settings"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -22,7 +23,7 @@ const chmod = os.FileMode(0600)
 func GetEnvironmentMostRecentSequenceNumber() (int, error) {
 	hEnv, err := settings.GetEnvironment()
 	if err != nil {
-		return -1, fmt.Errorf("unable to parse handler environment : %s", err)
+		return -1, errors.WithStack(fmt.Errorf("unable to parse handler environment : %s", err))
 	}
 	return findEnvironmentMostRecentSequenceNumber(hEnv.HandlerEnvironment.ConfigFolder)
 }
@@ -51,13 +52,13 @@ func findEnvironmentMostRecentSequenceNumber(configFolder string) (int, error) {
 		f := filepath.Base(v)
 		i, err := strconv.Atoi(strings.Replace(f, ".settings", "", 1))
 		if err != nil {
-			return 0, fmt.Errorf("can't parse int from filename: %s", f)
+			return 0, errors.WithStack(fmt.Errorf("can't parse int from filename: %s", f))
 		}
 		sequence = append(sequence, i)
 	}
 
 	if len(sequence) == 0 {
-		return 0, fmt.Errorf("can't find out seqnum from %s, not enough files", configFolder)
+		return 0, errors.WithStack(fmt.Errorf("can't find out seqnum from %s, not enough files", configFolder))
 	}
 	sort.Sort(sort.Reverse(sort.IntSlice(sequence)))
 	return sequence[0], nil
@@ -70,7 +71,7 @@ func findExtensionMostRecentSequenceNumber() (int, error) {
 		if os.IsNotExist(err) {
 			return -1, nil
 		}
-		return -1, fmt.Errorf("failed to read mrseq file : %s", err)
+		return -1, errors.WithStack(fmt.Errorf("failed to read mrseq file : %s", err))
 	}
 
 	mrseq, err := strconv.Atoi(string(mrseqStr))

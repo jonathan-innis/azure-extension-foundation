@@ -42,12 +42,12 @@ func ReportStatus(sequenceNumber int, opStatus string, operation, message string
 	s := newStatus(opStatus, operation, message)
 	hEnv, err := settings.GetEnvironment()
 	if err != nil {
-		return fmt.Errorf("unable to get handler environment settings : %v", err)
+		return errors.WithStack(fmt.Errorf("unable to get handler environment settings : %v", err))
 	}
 
 	if err := s.Save(hEnv.HandlerEnvironment.StatusFolder, sequenceNumber); err != nil {
 		//ctx.Log("event", "failed to save handler opStatus", "error", err)
-		return fmt.Errorf("failed to save handler operation status : %s", err)
+		return errors.WithStack(fmt.Errorf("failed to save handler operation status : %s", err))
 	}
 	return nil
 }
@@ -60,20 +60,20 @@ func (r statusReport) Save(statusFolder string, seqNum int) error {
 	path := filepath.Join(statusFolder, fn)
 	tmpFile, err := ioutil.TempFile(statusFolder, fn)
 	if err != nil {
-		return fmt.Errorf("status: failed to create temporary file: %v", err)
+		return errors.WithStack(fmt.Errorf("status: failed to create temporary file: %v", err))
 	}
 	tmpFile.Close()
 
 	b, err := r.marshal()
 	if err != nil {
-		return fmt.Errorf("status: failed to marshal into json: %v", err)
+		return errors.WithStack(fmt.Errorf("status: failed to marshal into json: %v", err))
 	}
 	if err := ioutil.WriteFile(tmpFile.Name(), b, chmod); err != nil {
-		return fmt.Errorf("status: failed to path=%s error=%v", tmpFile.Name(), err)
+		return errors.WithStack(fmt.Errorf("status: failed to path=%s error=%v", tmpFile.Name(), err))
 	}
 
 	if err := os.Rename(tmpFile.Name(), path); err != nil {
-		return fmt.Errorf("status: failed to move to path=%s error=%v", path, err)
+		return errors.WithStack(fmt.Errorf("status: failed to move to path=%s error=%v", path, err))
 	}
 	return nil
 }

@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"os/exec"
 	"path/filepath"
@@ -30,11 +31,11 @@ type handlerSettings struct {
 func GetExtensionSettings(sequenceNumber int, publicSettings, protectedSettings interface{}) error {
 	publicSettingsJSON, protectedSettingsJSON, err := readSettings(sequenceNumber)
 	if err != nil {
-		return fmt.Errorf("error reading handler settings: %v", err)
+		return errors.WithStack(fmt.Errorf("error reading handler settings: %v", err))
 	}
 
 	if err := unmarshalHandlerSettings(publicSettingsJSON, protectedSettingsJSON, &publicSettings, &protectedSettings); err != nil {
-		return fmt.Errorf("error parsing handler settings: %v", err)
+		return errors.WithStack(fmt.Errorf("error parsing handler settings: %v", err))
 	}
 
 	return nil
@@ -46,22 +47,22 @@ func GetExtensionSettings(sequenceNumber int, publicSettings, protectedSettings 
 func readSettings(sequenceNumber int) (public, protected map[string]interface{}, _ error) {
 	hEnv, err := GetEnvironment()
 	if err != nil {
-		return nil, nil, fmt.Errorf("unable to get handler environment: %v", err)
+		return nil, nil, errors.WithStack(fmt.Errorf("unable to get handler environment: %v", err))
 	}
 	configFolderPath := hEnv.HandlerEnvironment.ConfigFolder
 
 	cf, err := settingsFilePath(configFolderPath, sequenceNumber)
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot locate settings file: %v", err)
+		return nil, nil, errors.WithStack(fmt.Errorf("cannot locate settings file: %v", err))
 	}
 	hs, err := parseHandlerSettingsFile(cf)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error parsing settings file: %v", err)
+		return nil, nil, errors.WithStack(fmt.Errorf("error parsing settings file: %v", err))
 	}
 
 	public = hs.PublicSettings
 	if err := unmarshalProtectedSettings(configFolderPath, hs, &protected); err != nil {
-		return nil, nil, fmt.Errorf("failed to parse protected settings: %v", err)
+		return nil, nil, errors.WithStack(fmt.Errorf("failed to parse protected settings: %v", err))
 	}
 	return public, protected, nil
 }
@@ -71,10 +72,10 @@ func readSettings(sequenceNumber int) (public, protected map[string]interface{},
 // (of struct types that contain structured fields for settings).
 func unmarshalHandlerSettings(publicSettings, protectedSettings map[string]interface{}, publicV, protectedV interface{}) error {
 	if err := unmarshalSettings(publicSettings, &publicV); err != nil {
-		return fmt.Errorf("failed to unmarshal public settings: %v", err)
+		return errors.WithStack(fmt.Errorf("failed to unmarshal public settings: %v", err))
 	}
 	if err := unmarshalSettings(protectedSettings, &protectedV); err != nil {
-		return fmt.Errorf("failed to unmarshal protected settings: %v", err)
+		return errors.WithStack(fmt.Errorf("failed to unmarshal protected settings: %v", err))
 	}
 	return nil
 }
@@ -90,7 +91,7 @@ func settingsFilePath(configFolder string, sequenceNumber int) (string, error) {
 func parseHandlerSettingsFile(path string) (h handlerSettings, _ error) {
 	b, err := ioutil.ReadFile(path)
 	if err != nil {
-		return h, fmt.Errorf("error reading setting's file %s: %v", path, err)
+		return h, errors.WithStack(fmt.Errorf("error reading setting's file %s: %v", path, err))
 	}
 	if len(b) == 0 { // if no config is specified, we get an empty file
 		return h, nil
@@ -98,10 +99,10 @@ func parseHandlerSettingsFile(path string) (h handlerSettings, _ error) {
 
 	var f handlerSettingsFile
 	if err := json.Unmarshal(b, &f); err != nil {
-		return h, fmt.Errorf("error parsing json: %v", err)
+		return h, errors.WithStack(fmt.Errorf("error parsing json: %v", err))
 	}
 	if len(f.RuntimeSettings) != 1 {
-		return h, fmt.Errorf("wrong runtimeSettings count. expected:1, got:%d", len(f.RuntimeSettings))
+		return h, errors.WithStack(fmt.Errorf("wrong runtimeSettings count. expected:1, got:%d", len(f.RuntimeSettings)))
 	}
 	return f.RuntimeSettings[0].HandlerSettings, nil
 }
@@ -111,10 +112,10 @@ func parseHandlerSettingsFile(path string) (h handlerSettings, _ error) {
 func unmarshalSettings(in interface{}, v interface{}) error {
 	s, err := json.Marshal(in)
 	if err != nil {
-		return fmt.Errorf("failed to marshal into json: %v", err)
+		return errors.WithStack(fmt.Errorf("failed to marshal into json: %v", err))
 	}
 	if err := json.Unmarshal(s, &v); err != nil {
-		return fmt.Errorf("failed to unmarshal json: %v", err)
+		return errors.WithStack(fmt.Errorf("failed to unmarshal json: %v", err))
 	}
 
 	return nil
@@ -128,12 +129,12 @@ func unmarshalProtectedSettings(configFolder string, hs handlerSettings, v inter
 		return nil
 	}
 	if hs.SettingsCertThumbprint == "" {
-		return fmt.Errorf("handlerSettings has protected settings but no cert thumbprint")
+		return errors.WithStack(fmt.Errorf("handlerSettings has protected settings but no cert thumbprint"))
 	}
 
 	decoded, err := base64.StdEncoding.DecodeString(hs.ProtectedSettingsBase64)
 	if err != nil {
-		return fmt.Errorf("failed to decode base64: %v", err)
+		return errors.WithStack(fmt.Errorf("failed to decode base64: %v", err))
 	}
 
 	// go two levels up where certs are placed (/var/lib/waagent)
@@ -150,12 +151,12 @@ func unmarshalProtectedSettings(configFolder string, hs handlerSettings, v inter
 	cmd.Stderr = &bErr
 
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("decrypting protected settings failed: error=%v stderr=%s", err, string(bErr.Bytes()))
+		return errors.WithStack(fmt.Errorf("decrypting protected settings failed: error=%v stderr=%s", err, string(bErr.Bytes())))
 	}
 
 	// decrypted: json object for protected settings
 	if err := json.Unmarshal(bOut.Bytes(), &v); err != nil {
-		return fmt.Errorf("failed to unmarshal decrypted settings json: %v", err)
+		return errors.WithStack(fmt.Errorf("failed to unmarshal decrypted settings json: %v", err))
 	}
 	return nil
 }
