@@ -16,6 +16,9 @@ class Shim(metaclass=ABCMeta):
         self.settings = settings.Settings(lib)
         self.log = log.Log(lib)
 
+        self.protected_settings = {}
+        self.public_settings = {}
+
     """
     Install calls 
     """
@@ -40,7 +43,10 @@ class Shim(metaclass=ABCMeta):
             self.log.error("Error updating the sequence number for the extension: %s"%(EXTENSION_NAME))
         self.log.info("BEGIN Enable Extension: %s"%(EXTENSION_NAME))
         self.status.transitioning("BEGIN Enable Extension: %s"%(EXTENSION_NAME), "BEGIN Enable Extension: %s"%(EXTENSION_NAME))
-        self.settings.update_settings()
+        
+        # Get settings to return back to the user to use in application logic
+        self.protected_settings = self.settings.get_protected_settings()
+        self.public_settings = self.settings.get_public_settings()
     
     @abstractmethod
     def enable(self):

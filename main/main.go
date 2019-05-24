@@ -78,15 +78,32 @@ func UpdateSeqNum() error {
 	return err
 }
 
-//export GetExtensionSettings
-func GetExtensionSettings() error {
+//export GetPublicSettings
+func GetPublicSettings() (string, []string) {
 	_, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
+	if err != nil{
+		errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number: %v", err))
+	}
 
 	var publicSettings PublicSettings
 	var protectedSettings ProtectedSettings
 
 	err = settings.GetExtensionSettings(environmentMrseq, &publicSettings, &protectedSettings)
-	return err
+	return publicSettings.Script, publicSettings.FileURLs
+}
+
+//export GetProtectedSettings
+func GetProtectedSettings() (string, string, []string, string, string) {
+	_, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
+	if err != nil{
+		errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number: %v", err))
+	}
+
+	var publicSettings PublicSettings
+	var protectedSettings ProtectedSettings
+
+	err = settings.GetExtensionSettings(environmentMrseq, &publicSettings, &protectedSettings)
+	return protectedSettings.SecretString, protectedSettings.SecretScript, protectedSettings.FileURLs, protectedSettings.StorageAccountName, protectedSettings.StorageAccountKey
 }
 
 func main(){

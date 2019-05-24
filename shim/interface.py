@@ -1,7 +1,7 @@
 from shim import Shim
 import sys
 
-class ExtensionInterface(Shim):
+class Interface(Shim):
     def install(self):
         pass
     
@@ -40,7 +40,7 @@ class ExtensionInterface(Shim):
 
 def main():
     assert len(sys.argv) == 2
-    extension_interface = ExtensionInterface()
+    extension_interface = Interface()
     extension_interface.handle_cmd(sys.argv[1])
 
 
