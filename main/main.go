@@ -17,20 +17,8 @@ const (
 	statusSuccess       ExtensionStatus = "success"
 )
 
-// extension specific PublicSettings
-type PublicSettings struct {
-	Script   string   `json:"script"`
-	FileURLs []string `json:"fileUris"`
-}
-
-// extension specific ProtectedSettings
-type ProtectedSettings struct {
-	SecretString       string   `json:"secretString"`
-	SecretScript       string   `json:"secretScript"`
-	FileURLs           []string `json:"fileUris"`
-	StorageAccountName string   `json:"storageAccountName"`
-	StorageAccountKey  string   `json:"storageAccountKey"`
-}
+type PublicSettings interface{}
+type ProtectedSettings interface{}
 
 func (status ExtensionStatus) String() string {
 	return string(status)
@@ -79,7 +67,7 @@ func UpdateSeqNum() error {
 }
 
 //export GetPublicSettings
-func GetPublicSettings() (string, []string) {
+func GetPublicSettings() PublicSettings {
 	_, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
 	if err != nil {
 		errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number: %v", err))
@@ -92,11 +80,12 @@ func GetPublicSettings() (string, []string) {
 	if err != nil {
 		errorhelper.AddStackToError(fmt.Errorf("unable to get public settings: %v", err))
 	}
-	return publicSettings.Script, publicSettings.FileURLs
+	return publicSettings
 }
 
 //export GetProtectedSettings
-func GetProtectedSettings() (string, string, []string, string, string) {
+func GetProtectedSettings() ProtectedSettings {
+
 	_, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
 	if err != nil {
 		errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number: %v", err))
@@ -110,7 +99,7 @@ func GetProtectedSettings() (string, string, []string, string, string) {
 		errorhelper.AddStackToError(fmt.Errorf("unable to get protected settings: %v", err))
 	}
 
-	return protectedSettings.SecretString, protectedSettings.SecretScript, protectedSettings.FileURLs, protectedSettings.StorageAccountName, protectedSettings.StorageAccountKey
+	return protectedSettings
 }
 
 func main(){

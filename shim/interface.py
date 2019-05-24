@@ -39,9 +39,6 @@ class Interface(Shim):
             self.pre_install()
             self.install()
             self.post_install()
-            self.pre_enable()
-            self.enable()
-            self.post_enable()
         elif cmd == "enable":
             self.pre_enable()
             self.enable()
@@ -51,9 +48,6 @@ class Interface(Shim):
             self.disable()
             self.post_disable()
         elif cmd == "uninstall":
-            self.pre_disable()
-            self.disable()
-            self.post_disable()
             self.pre_uninstall()
             self.uninstall()
             self.post_uinstall()

@@ -85,24 +85,9 @@ extern GoInterface ReportSuccess(GoString p0, GoString p1);
 
 extern GoInterface UpdateSeqNum();
 
-/* Return type for GetPublicSettings */
-struct GetPublicSettings_return {
-	GoString r0;
-	GoSlice r1;
-};
+extern GoInterface GetPublicSettings();
 
-extern struct GetPublicSettings_return GetPublicSettings();
-
-/* Return type for GetProtectedSettings */
-struct GetProtectedSettings_return {
-	GoString r0;
-	GoString r1;
-	GoSlice r2;
-	GoString r3;
-	GoString r4;
-};
-
-extern struct GetProtectedSettings_return GetProtectedSettings();
+extern GoInterface GetProtectedSettings();
 
 #ifdef __cplusplus
 }
