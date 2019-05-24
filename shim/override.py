@@ -1,4 +1,5 @@
 from shim import Shim
+import sys
 
 class Override(Shim):
     def install(self):
@@ -12,9 +13,36 @@ class Override(Shim):
     
     def uninstall(self):
         pass
+    
+    def handle_cmd(self, cmd):
+        if cmd == "install":
+            self.pre_install()
+            self.install()
+            self.post_install()
+            self.pre_enable()
+            self.enable()
+            self.post_enable()
+        elif cmd == "enable":
+            self.pre_enable()
+            self.enable()
+            self.post_enable()
+        elif cmd == "disable":
+            self.pre_disable()
+            self.disable()
+            self.post_disable()
+        elif cmd == "uninstall":
+            self.pre_disable()
+            self.disable()
+            self.post_disable()
+            self.pre_uninstall()
+            self.uninstall()
+            self.post_uinstall()
 
 def main():
+    assert len(sys.argv) == 2
     override = Override()
+    override.handle_cmd(sys.argv[1])
+
 
 if __name__ == "__main__":
     main()

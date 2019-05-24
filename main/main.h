@@ -81,6 +81,12 @@ extern GoInterface ReportError(GoString p0, GoString p1);
 
 extern GoInterface ReportSuccess(GoString p0, GoString p1);
 
+// UpdateSeqNum updates the sequence number to the most recent sequence number as long as it hasn't been processed
+
+extern GoInterface UpdateSeqNum();
+
+extern GoInterface GetExtensionSettings();
+
 #ifdef __cplusplus
 }
 #endif

@@ -2,8 +2,9 @@ from ctypes import *
 
 class Settings:
     def __init__(self, lib):
-        lib.GetExtensionSettings.argtypes = []
+        self.lib = lib
+        self.lib.GetExtensionSettings.argtypes = []
     
     def update_settings(self):
-        return lib.GetExtensionSettings()
+        return self.lib.GetExtensionSettings()
             

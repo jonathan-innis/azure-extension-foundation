@@ -1,11 +1,12 @@
-from cyptes import *
+from ctypes import *
 
 class Log:
     def __init__(self, lib):
+        self.lib = lib
         pass
-    def info(message):
+    def info(self, message):
         pass
-    def warning(message):
+    def warning(self, message):
         pass
-    def error(message):
+    def error(self, message):
         pass

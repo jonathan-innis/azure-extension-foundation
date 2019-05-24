@@ -67,6 +67,7 @@ func ReportSuccess(operation string, message string) error {
 }
 
 // UpdateSeqNum updates the sequence number to the most recent sequence number as long as it hasn't been processed
+//export UpdateSeqNum
 func UpdateSeqNum() error {
 	extensionMrseq, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
 	shouldRun := sequence.ShouldBeProcessed(extensionMrseq, environmentMrseq)
@@ -80,6 +81,7 @@ func UpdateSeqNum() error {
 	return nil
 }
 
+//export GetExtensionSettings
 func GetExtensionSettings() error {
 	_, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
 
