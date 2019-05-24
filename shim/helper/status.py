@@ -1,3 +1,5 @@
+from ctypes import *
+
 class Status:
     def __init__(self, lib):
         lib.ReportTransitioning.argtypes = [c_int, c_wchar_p, c_wchar_p]

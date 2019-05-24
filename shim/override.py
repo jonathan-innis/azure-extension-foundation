@@ -1,18 +1,20 @@
 from shim import Shim
 
-TIMEOUT = False
-
 class Override(Shim):
     def install(self):
-        print("installing")
+        pass
     
     def enable(self):
-        print("enabling")
+        pass
+    
+    def disable(self):
+        pass
+    
+    def uninstall(self):
+        pass
 
 def main():
     override = Override()
-    override.install()
-    override.enable()
 
 if __name__ == "__main__":
     main()
