@@ -81,13 +81,17 @@ extern GoInterface ReportError(GoString p0, GoString p1);
 
 extern GoInterface ReportSuccess(GoString p0, GoString p1);
 
-// UpdateSeqNum updates the sequence number to the most recent sequence number as long as it hasn't been processed
+// CheckSeqNum checks the most recent sequence number and compares it to the current one to see if the application needs to run
 
-extern GoInterface UpdateSeqNum();
+extern GoInterface CheckSeqNum();
 
-extern GoInterface GetPublicSettings();
+/* Return type for GetSettings */
+struct GetSettings_return {
+	GoInterface r0;
+	GoInterface r1;
+};
 
-extern GoInterface GetProtectedSettings();
+extern struct GetSettings_return GetSettings();
 
 #ifdef __cplusplus
 }

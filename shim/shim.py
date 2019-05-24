@@ -35,7 +35,7 @@ class Shim(metaclass=ABCMeta):
     Enable calls
     """
     def pre_enable(self):
-        error = self.sequence.update_sequence_number()
+        error = self.sequence.check_sequence_number()
         if error is not None:
             self.log.error("Error updating the sequence number for the extension: %s"%(EXTENSION_NAME))
         self.log.info("BEGIN Enable Extension: %s"%(EXTENSION_NAME))

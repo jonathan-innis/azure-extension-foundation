@@ -3,11 +3,7 @@ from ctypes import *
 class Settings:
     def __init__(self, lib):
         self.lib = lib
-        self.lib.GetProtectedSettings.argtypes = []
-        self.lib.GetPublicSettings.argtypes = []
+        self.lib.GetSettings.argtypes = []
     
-    def get_protected_settings(self):
-        return setf.lib.GetPublicSettings()
-    
-    def get_public_settings(self):
-        return self.lib.GetPublicSettings()
+    def get_settings(self):
+        self.lib.GetSettings()
