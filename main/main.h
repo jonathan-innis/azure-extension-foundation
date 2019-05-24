@@ -71,7 +71,7 @@ extern "C" {
 
 // ReportTransitioning reports the extension status as "transitioning"
 
-extern GoInterface ReportTransitioning(GoString p0, GoString p1);
+extern void ReportTransitioning(GoString p0, GoString p1);
 
 // ReportError reports the extension status as "error"
 

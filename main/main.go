@@ -26,13 +26,12 @@ func (status ExtensionStatus) String() string {
 
 // ReportTransitioning reports the extension status as "transitioning"
 //export ReportTransitioning
-func ReportTransitioning(operation string, message string) error {
-	_, _, err := sequence.GetMostRecentSequenceNumber()
+func ReportTransitioning(operation string, message string) {
+	_, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
 	if err != nil {
-		return errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number : %v", err))
+		errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number : %v", err))
 	}
-	return nil
-	//return status.ReportStatus(environmentMrseq, statusTransitioning.String(), operation, message)
+	status.ReportStatus(environmentMrseq, statusTransitioning.String(), operation, message)
 }
 
 // ReportError reports the extension status as "error"
