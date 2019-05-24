@@ -1,7 +1,7 @@
 from shim import Shim
 import sys
 
-class Override(Shim):
+class ExtensionInterface(Shim):
     def install(self):
         pass
     
@@ -40,8 +40,8 @@ class Override(Shim):
 
 def main():
     assert len(sys.argv) == 2
-    override = Override()
-    override.handle_cmd(sys.argv[1])
+    extension_interface = ExtensionInterface()
+    extension_interface.handle_cmd(sys.argv[1])
 
 
 if __name__ == "__main__":

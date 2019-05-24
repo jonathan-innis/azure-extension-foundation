@@ -4,12 +4,13 @@ from helper import settings
 from helper import sequence
 from abc import abstractmethod, ABCMeta
 from ctypes import *
+import os
 
 EXTENSION_NAME = "some extension"
 
 class Shim(metaclass=ABCMeta):
     def __init__(self):
-        lib = cdll.LoadLibrary("C:\\Users\\t-joinni\\go\\src\\github.com\\Azure\\azure-extension-foundation\\main\\main.so")
+        lib = cdll.LoadLibrary(os.path.dirname(__file__) + "/main.so")
         self.status = status.Status(lib)
         self.sequence = sequence.Sequence(lib)
         self.settings = settings.Settings(lib)

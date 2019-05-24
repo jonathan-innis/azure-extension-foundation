@@ -75,10 +75,7 @@ func UpdateSeqNum() error {
 		return errorhelper.AddStackToError(fmt.Errorf("environment mrseq has already been processed by extension (environment mrseq : %v, extension mrseq : %v)\n", environmentMrseq, extensionMrseq))
 	}
 	err = sequence.SetExtensionMostRecentSequenceNumber(environmentMrseq)
-	if err != nil{
-		return errorhelper.AddStackToError(fmt.Errorf("unable to set most recent sequence number to extension (environment mrseq : %v, extension mrseq : %v)\n", environmentMrseq, extensionMrseq))
-	}
-	return nil
+	return err
 }
 
 //export GetExtensionSettings
@@ -89,10 +86,7 @@ func GetExtensionSettings() error {
 	var protectedSettings ProtectedSettings
 
 	err = settings.GetExtensionSettings(environmentMrseq, &publicSettings, &protectedSettings)
-	if err != nil{
-		return errorhelper.AddStackToError(fmt.Errorf("unable to get settings from settings file: %v", err))
-	}
-	return nil
+	return err
 }
 
 func main(){
