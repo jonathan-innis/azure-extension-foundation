@@ -37,8 +37,8 @@ class Interface(Shim):
             create_manifest()
         elif cmd == "install":
             self.pre_install()
-            self.install()
-            self.post_install()
+            #self.install()
+            #self.post_install()
         elif cmd == "enable":
             self.pre_enable()
             self.enable()
