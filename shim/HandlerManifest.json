@@ -1,0 +1,1 @@
+{"version": 1.0, "handler_manifest": {"installCommaned": "python interface.py install", "uninstallCommand": "python interface.py uninstall", "updateCommand": "python interface.py update", "enableCommand": "python interface.py enable", "disableCommand": "python interface.py disable", "rebootAfterInstall": false, "reportHearbeat": true}}

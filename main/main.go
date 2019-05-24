@@ -40,7 +40,7 @@ func (status ExtensionStatus) String() string {
 //export ReportTransitioning
 func ReportTransitioning(operation string, message string) error {
 	_, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
-	if err != nil{
+	if err != nil {
 		return errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number : %v", err))
 	}
 	return status.ReportStatus(environmentMrseq, statusTransitioning.String(), operation, message)
@@ -50,7 +50,7 @@ func ReportTransitioning(operation string, message string) error {
 //export ReportError
 func ReportError(operation string, message string) error {
 	_, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
-	if err != nil{
+	if err != nil {
 		return errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number : %v", err))
 	}
 	return status.ReportStatus(environmentMrseq, statusError.String(), operation, message)
@@ -60,7 +60,7 @@ func ReportError(operation string, message string) error {
 //export ReportSuccess
 func ReportSuccess(operation string, message string) error {
 	_, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
-	if err != nil{
+	if err != nil {
 		return errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number : %v", err))
 	}
 	return status.ReportStatus(environmentMrseq, statusSuccess.String(), operation, message)
@@ -71,7 +71,7 @@ func ReportSuccess(operation string, message string) error {
 func UpdateSeqNum() error {
 	extensionMrseq, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
 	shouldRun := sequence.ShouldBeProcessed(extensionMrseq, environmentMrseq)
-	if !shouldRun{
+	if !shouldRun {
 		return errorhelper.AddStackToError(fmt.Errorf("environment mrseq has already been processed by extension (environment mrseq : %v, extension mrseq : %v)\n", environmentMrseq, extensionMrseq))
 	}
 	err = sequence.SetExtensionMostRecentSequenceNumber(environmentMrseq)
@@ -81,7 +81,7 @@ func UpdateSeqNum() error {
 //export GetPublicSettings
 func GetPublicSettings() (string, []string) {
 	_, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
-	if err != nil{
+	if err != nil {
 		errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number: %v", err))
 	}
 
@@ -89,13 +89,16 @@ func GetPublicSettings() (string, []string) {
 	var protectedSettings ProtectedSettings
 
 	err = settings.GetExtensionSettings(environmentMrseq, &publicSettings, &protectedSettings)
+	if err != nil {
+		errorhelper.AddStackToError(fmt.Errorf("unable to get public settings: %v", err))
+	}
 	return publicSettings.Script, publicSettings.FileURLs
 }
 
 //export GetProtectedSettings
 func GetProtectedSettings() (string, string, []string, string, string) {
 	_, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
-	if err != nil{
+	if err != nil {
 		errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number: %v", err))
 	}
 
@@ -103,6 +106,10 @@ func GetProtectedSettings() (string, string, []string, string, string) {
 	var protectedSettings ProtectedSettings
 
 	err = settings.GetExtensionSettings(environmentMrseq, &publicSettings, &protectedSettings)
+	if err != nil {
+		errorhelper.AddStackToError(fmt.Errorf("unable to get protected settings: %v", err))
+	}
+
 	return protectedSettings.SecretString, protectedSettings.SecretScript, protectedSettings.FileURLs, protectedSettings.StorageAccountName, protectedSettings.StorageAccountKey
 }
 

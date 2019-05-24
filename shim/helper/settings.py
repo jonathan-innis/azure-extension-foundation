@@ -22,4 +22,3 @@ class Settings:
             "storage_acct_name": storage_acct_name,
             "storage_acct_key": storage_acct_key
         }
-            
