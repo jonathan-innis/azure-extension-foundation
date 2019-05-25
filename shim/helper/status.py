@@ -7,8 +7,8 @@ class Status:
     def __init__(self, lib):
         self.lib = lib
         self.lib.ReportTransitioning.argtypes = [GoString, GoString]
-        self.lib.ReportError.argtypes = [c_char_p, c_char_p]
-        self.lib.ReportSuccess.argtypes = [c_char_p, c_char_p]
+        self.lib.ReportError.argtypes = [GoString, GoString]
+        self.lib.ReportSuccess.argtypes = [GoString, GoString]
 
     def transitioning(self, operation, message):
         operation_str = GoString(operation.encode('utf-8'), len(operation))
