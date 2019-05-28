@@ -13,9 +13,6 @@ class Shim(metaclass=ABCMeta):
         self.settings = settings.Settings(lib)
         self.log = log.Log(lib)
 
-        self.protected_settings = {}
-        self.public_settings = {}
-
     """
     Install calls 
     """

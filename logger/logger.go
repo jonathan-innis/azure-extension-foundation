@@ -3,7 +3,7 @@ package logger
 import (
 	"os"
 	"github.com/go-kit/kit/log"
-	"github.com/Azure/azure-extension-foundation/settings"
+	// "github.com/Azure/azure-extension-foundation/settings"
 	"io"
 	golog "log"
 	"path"
@@ -28,13 +28,14 @@ type ExtensionLogger struct {
 
 // create a new ExtensionLogger
 func NewLogger(logPath, ExtensionHandlerLogFileName string) ExtensionLogger {
-	he, err := settings.GetHandlerEnvironment()
-	LOGDIR := he.HandlerEnvironment.LogFolder
+	// he, err := settings.GetHandlerEnvironment()
+	// LOGDIR := he.HandlerEnvironment.LogFolder
+	LOGDIR := "logs"
 	if err := os.MkdirAll(LOGDIR, 0644); err != nil {
 		golog.Printf("ERROR: Cannot create log folder %s: %v \r\n", LOGDIR, err)
 	}
 
-	extensionLogPath := path.Join(logPath, ExtensionHandlerLogFileName)
+	extensionLogPath := path.Join(logPath, path.Join(LOGDIR, ExtensionHandlerLogFileName))
 	golog.Printf("Logging in file %s: in directory %s: .\r\n", ExtensionHandlerLogFileName, logPath)
 
 	fileHandle, err := os.OpenFile(extensionLogPath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
