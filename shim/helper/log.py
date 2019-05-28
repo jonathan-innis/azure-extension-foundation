@@ -1,5 +1,5 @@
 from ctypes import *
-from types import GoString
+from helper.types import GoString
 
 class Log:
     def __init__(self, lib):
@@ -9,10 +9,10 @@ class Log:
         self.lib.LogError.argtypes = [GoString]
         
     def info(self, message):
-        self.lib.LogInfo(message.encode('utf-8'), len(message))
+        self.lib.LogInfo(GoString(message.encode('utf-8'), len(message)))
         
     def warning(self, message):
-        self.lib.LogWarning(message.encode('utf-8'), len(message))
+        self.lib.LogWarning(GoString(message.encode('utf-8'), len(message)))
 
     def error(self, message):
-        self.lib.LogError(message.encode('utf-8'), len(message))
+        self.lib.LogError(GoString(message.encode('utf-8'), len(message)))

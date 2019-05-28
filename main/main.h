@@ -83,9 +83,15 @@ extern char* ReportSuccess(GoString p0, GoString p1);
 
 // CheckSeqNum checks the most recent sequence number and compares it to the current one to see if the application needs to run
 
-extern void CheckSeqNum();
+extern GoUint8 CheckSeqNum();
 
 extern char* GetSettings();
+
+extern void LogInfo(GoString p0);
+
+extern void LogWarning(GoString p0);
+
+extern void LogError(GoString p0);
 
 #ifdef __cplusplus
 }

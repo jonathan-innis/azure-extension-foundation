@@ -1,5 +1,5 @@
 from ctypes import *
-from types import GoString
+from helper.types import GoString
 
 class Status:
     def __init__(self, lib):
