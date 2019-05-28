@@ -130,12 +130,18 @@ func LogError(message string){
 }
 
 func ConvertSettingsToString(settings Settings) string {
-	jsonString, _ := json.Marshal(settings)
+	jsonString, err := json.Marshal(settings)
+	if err != nil {
+		errorhelper.AddStackToError(fmt.Errorf("unable to convert settings into a json string: %v", err))
+	}
 	return string(jsonString)
 }
 
-func ConvertErrorToString(err error) string{
-	jsonString, _ := json.Marshal(err)
+func ConvertErrorToString(msg error) string{
+	jsonString, err := json.Marshal(msg)
+	if err != nil {
+		errorhelper.AddStackToError(fmt.Errorf("unable to convert the error object into a json string: %v", err))
+	}
 	return string(jsonString)
 }
 
