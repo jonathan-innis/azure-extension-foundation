@@ -71,27 +71,21 @@ extern "C" {
 
 // ReportTransitioning reports the extension status as "transitioning"
 
-extern void ReportTransitioning(GoString p0, GoString p1);
+extern char* ReportTransitioning(GoString p0, GoString p1);
 
 // ReportError reports the extension status as "error"
 
-extern GoInterface ReportError(GoString p0, GoString p1);
+extern char* ReportError(GoString p0, GoString p1);
 
 // ReportSuccess reports the extension status as "success"
 
-extern GoInterface ReportSuccess(GoString p0, GoString p1);
+extern char* ReportSuccess(GoString p0, GoString p1);
 
 // CheckSeqNum checks the most recent sequence number and compares it to the current one to see if the application needs to run
 
-extern GoInterface CheckSeqNum();
+extern void CheckSeqNum();
 
-/* Return type for GetSettings */
-struct GetSettings_return {
-	GoInterface r0;
-	GoInterface r1;
-};
-
-extern struct GetSettings_return GetSettings();
+extern char* GetSettings();
 
 #ifdef __cplusplus
 }

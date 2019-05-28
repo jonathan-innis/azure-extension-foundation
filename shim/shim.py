@@ -35,15 +35,12 @@ class Shim(metaclass=ABCMeta):
     Enable calls
     """
     def pre_enable(self):
-        error = self.sequence.check_sequence_number()
-        if error is not None:
-            self.log.error("Error updating the sequence number for the extension: %s"%(EXTENSION_NAME))
+        shouldProcess = self.sequence.check_sequence_number()
         self.log.info("BEGIN Enable Extension: %s"%(EXTENSION_NAME))
         self.status.transitioning("BEGIN Enable Extension: %s"%(EXTENSION_NAME), "BEGIN Enable Extension: %s"%(EXTENSION_NAME))
         
         # Get settings to return back to the user to use in application logic
-        self.protected_settings = self.settings.get_protected_settings()
-        self.public_settings = self.settings.get_public_settings()
+        self.settings = self.settings.get_settings()
     
     @abstractmethod
     def enable(self):

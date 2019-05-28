@@ -6,6 +6,8 @@ import (
 	"github.com/Azure/azure-extension-foundation/sequence"
 	"github.com/Azure/azure-extension-foundation/errorhelper"
 	"github.com/Azure/azure-extension-foundation/settings"
+	"github.com/Azure/azure-extension-foundation/logger"
+	"encoding/json"
 	"fmt"
 )
 
@@ -17,6 +19,7 @@ const (
 	statusSuccess       ExtensionStatus = "success"
 )
 
+type Settings map[string]interface{}
 type PublicSettings interface{}
 type ProtectedSettings interface{}
 
@@ -26,48 +29,55 @@ func (status ExtensionStatus) String() string {
 
 // ReportTransitioning reports the extension status as "transitioning"
 //export ReportTransitioning
-func ReportTransitioning(operation string, message string) {
+func ReportTransitioning(operation string, message string) *C.char {
 	_, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
 	if err != nil {
-		errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number : %v", err))
+		err = errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number : %v", err))
+		return C.CString(ConvertErrorToString(err))
 	}
-	status.ReportStatus(environmentMrseq, statusTransitioning.String(), operation, message)
+	err = status.ReportStatus(environmentMrseq, statusTransitioning.String(), operation, message)
+	return C.CString(ConvertErrorToString(err))
 }
 
 // ReportError reports the extension status as "error"
 //export ReportError
-func ReportError(operation string, message string) error {
+func ReportError(operation string, message string) *C.char {
 	_, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
 	if err != nil {
-		return errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number : %v", err))
+		err = errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number : %v", err))
+		return C.CString(ConvertErrorToString(err))
 	}
-	return status.ReportStatus(environmentMrseq, statusError.String(), operation, message)
+	err = status.ReportStatus(environmentMrseq, statusError.String(), operation, message)
+	return C.CString(ConvertErrorToString(err))
 }
 
 // ReportSuccess reports the extension status as "success"
 //export ReportSuccess
-func ReportSuccess(operation string, message string) error {
+func ReportSuccess(operation string, message string) *C.char {
 	_, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
 	if err != nil {
-		return errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number : %v", err))
+		err = errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number : %v", err))
+		return C.CString(ConvertErrorToString(err))
 	}
-	return status.ReportStatus(environmentMrseq, statusSuccess.String(), operation, message)
+	err = status.ReportStatus(environmentMrseq, statusSuccess.String(), operation, message)
+	return C.CString(ConvertErrorToString(err))
 }
 
 // CheckSeqNum checks the most recent sequence number and compares it to the current one to see if the application needs to run
 //export CheckSeqNum
-func CheckSeqNum() error {
-	extensionMrseq, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
+func CheckSeqNum() bool {
+	extensionMrseq, environmentMrseq, _ := sequence.GetMostRecentSequenceNumber()
 	shouldRun := sequence.ShouldBeProcessed(extensionMrseq, environmentMrseq)
 	if !shouldRun {
-		return errorhelper.AddStackToError(fmt.Errorf("environment mrseq has already been processed by extension (environment mrseq : %v, extension mrseq : %v)\n", environmentMrseq, extensionMrseq))
+		errorhelper.AddStackToError(fmt.Errorf("environment mrseq has already been processed by extension (environment mrseq : %v, extension mrseq : %v)\n", environmentMrseq, extensionMrseq))
+		return false
 	}
-	err = sequence.SetExtensionMostRecentSequenceNumber(environmentMrseq)
-	return err
+	sequence.SetExtensionMostRecentSequenceNumber(environmentMrseq)
+	return true
 }
 
 //export GetSettings
-func GetSettings() (ProtectedSettings, PublicSettings) {
+func GetSettings() *C.char {
 	_, environmentMrseq, err := sequence.GetMostRecentSequenceNumber()
 	if err != nil {
 		errorhelper.AddStackToError(fmt.Errorf("unable to get sequence number: %v", err))
@@ -80,8 +90,38 @@ func GetSettings() (ProtectedSettings, PublicSettings) {
 	if err != nil {
 		errorhelper.AddStackToError(fmt.Errorf("unable to get public settings: %v", err))
 	}
-	return protectedSettings, publicSettings
+	settings := map[string]interface{}{"protectedSettings": protectedSettings, "publicSettings": publicSettings}
+	return C.CString(ConvertSettingsToString(settings))
+}
+
+//export LogInfo
+func LogInfo(message string){
+	log := logger.NewLogger("", "")
+	log.Output(message)
+}
+
+//export LogWarning
+func LogWarning(message string){
+	log := logger.NewLogger("", "")
+	log.Output(message)
+}
+
+//export LogError
+func LogError(message string){
+	log := logger.NewLogger("", "")
+	log.Output(message)
+}
+
+func ConvertSettingsToString(settings Settings) string {
+	jsonString, _ := json.Marshal(settings)
+	return string(jsonString)
+}
+
+func ConvertErrorToString(err error) string{
+	jsonString, _ := json.Marshal(err)
+	return string(jsonString)
 }
 
 func main(){
+	LogWarning("hello")
 }

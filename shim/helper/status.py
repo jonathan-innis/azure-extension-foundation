@@ -1,7 +1,5 @@
 from ctypes import *
-
-class GoString(Structure):
-    _fields_ = [("p", c_char_p), ("n", c_longlong)]
+from types import GoString
 
 class Status:
     def __init__(self, lib):
@@ -9,18 +7,22 @@ class Status:
         self.lib.ReportTransitioning.argtypes = [GoString, GoString]
         self.lib.ReportError.argtypes = [GoString, GoString]
         self.lib.ReportSuccess.argtypes = [GoString, GoString]
+        self.lib.ReportTransitioning.restype = c_char_p
+        self.lib.ReportError.restype = c_char_p
+        self.lib.ReportSuccess.restype = c_char_p
+
 
     def transitioning(self, operation, message):
         operation_str = GoString(operation.encode('utf-8'), len(operation))
         message_str = GoString(message.encode('utf-8'), len(message))
-        self.lib.ReportTransitioning(operation_str, message_str)
+        return self.lib.ReportTransitioning(operation_str, message_str)
     
     def error(self, operation, message):
         operation_str = GoString(operation.encode('utf-8'), len(operation))
         message_str = GoString(message.encode('utf-8'), len(message))
-        self.lib.ReportError(operation_str, message_str)
+        return self.lib.ReportError(operation_str, message_str)
     
     def success(self, operation, message):
         operation_str = GoString(operation.encode('utf-8'), len(operation))
         message_str = GoString(message.encode('utf-8'), len(message))
-        self.lib.ReportSuccess(operation_str, message_str)
+        return self.lib.ReportSuccess(operation_str, message_str)
