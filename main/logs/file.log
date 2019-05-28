@@ -1,0 +1,4 @@
+time=2019-05-28T14:41:52.1235958-07:00 ExtensionLogPath:C:\Users\t-joinni\go\src\github.com\Azure\azure-extension-foundation\main/logs/file.log=(MISSING)
+time=2019-05-28T14:41:52.124576-07:00 BEGINInstallExtension:someextension=(MISSING)
+time=2019-05-28T14:41:52.1435957-07:00 ExtensionLogPath:C:\Users\t-joinni\go\src\github.com\Azure\azure-extension-foundation\main/logs/file.log=(MISSING)
+time=2019-05-28T14:41:52.1445785-07:00 ENDInstallExtensionsomeextension=(MISSING)

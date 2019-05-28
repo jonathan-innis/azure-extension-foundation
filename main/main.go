@@ -9,6 +9,8 @@ import (
 	"github.com/Azure/azure-extension-foundation/logger"
 	"encoding/json"
 	"fmt"
+	"os"
+	"path/filepath"
 )
 
 type ExtensionStatus string
@@ -96,19 +98,34 @@ func GetSettings() *C.char {
 
 //export LogInfo
 func LogInfo(message string){
-	log := logger.NewLogger("", "")
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0])) // Get the current path of the main.go file
+	if err != nil {
+		errorhelper.AddStackToError(fmt.Errorf("unable to get path of the current file: %v", err))
+		return
+	}
+	log := logger.NewLogger(dir, "file.log")
 	log.Output(message)
 }
 
 //export LogWarning
 func LogWarning(message string){
-	log := logger.NewLogger("", "")
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0])) // Get the current path of the main.go file
+	if err != nil {
+		errorhelper.AddStackToError(fmt.Errorf("unable to get path of the current file: %v", err))
+		return
+	}
+	log := logger.NewLogger(dir, "file.log")
 	log.Output(message)
 }
 
 //export LogError
 func LogError(message string){
-	log := logger.NewLogger("", "")
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0])) // Get the current path of the main.go file
+	if err != nil {
+		errorhelper.AddStackToError(fmt.Errorf("unable to get path of the current file: %v", err))
+		return
+	}
+	log := logger.NewLogger(dir, "file.log")
 	log.Output(message)
 }
 
@@ -122,6 +139,4 @@ func ConvertErrorToString(err error) string{
 	return string(jsonString)
 }
 
-func main(){
-	LogWarning("hello")
-}
+func main(){}
