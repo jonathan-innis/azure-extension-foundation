@@ -12,4 +12,4 @@
 .idea/*
 
 *.status
-*/__pycache__
+__pycache__/
